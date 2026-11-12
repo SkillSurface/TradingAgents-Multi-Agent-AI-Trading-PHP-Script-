@@ -1,0 +1,29 @@
+# =============================================================================
+# TradingAgents PHP 8.4 — Apache / LiteSpeed Shared Hosting Security Rules
+# Strictly compatible with Namecheap cPanel Shared Hosting (No Rewrite Traps)
+# =============================================================================
+
+Options -Indexes
+
+<IfModule mod_headers.c>
+    Header set X-Content-Type-Options "nosniff"
+    Header set X-Frame-Options "SAMEORIGIN"
+    Header set Referrer-Policy "strict-origin-when-cross-origin"
+</IfModule>
+
+# Prevent LiteSpeed from timing out background AJAX steps prematurely
+<IfModule Litespeed>
+    RewriteEngine On
+    RewriteRule .* - [E=noabort:1,E=noconntimeout:1]
+</IfModule>
+
+# Block direct public web access to sensitive configuration and schema files
+<FilesMatch "^(config\.php|config\.sample\.php|schema\.sql|composer\.json|\.env)$">
+    <IfModule mod_authz_core.c>
+        Require all denied
+    </IfModule>
+    <IfModule !mod_authz_core.c>
+        Order allow,deny
+        Deny from all
+    </IfModule>
+</FilesMatch>
